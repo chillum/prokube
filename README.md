@@ -8,3 +8,7 @@ Get Vagrant and VirtualBox, fire `vagrant up`. It's fully automated.
 
 * [Kubernetes dashboard](http://localhost:8080)
 * [Prometheus](http://localhost:8081)
+
+## Test cases for alerts
+
+* CPU usage: enter any node and launch `sh /vagrant/load-cpu.sh`

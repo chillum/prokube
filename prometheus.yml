@@ -152,6 +152,19 @@ data:
         - source_labels: [__meta_kubernetes_service_name]
           action: replace
           target_label: kubernetes_name
+
+    rule_files:
+      - /etc/prometheus/rules.yml
+  rules.yml: |-
+    groups:
+      - name: Alerts
+        rules:
+          - alert: NodeCpuHigh
+            expr: 100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[1m])) * 100) > 85
+            for: 15m
+            annotations:
+              summary: "{{ $labels.instance }}: High CPU usage"
+              description: "{{ $labels.instance }} CPU usage is above 85% (current value: {{ $value }})"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -211,3 +224,32 @@ spec:
     - port: 8081
       targetPort: 9090
       nodePort: 30001
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    k8s-app: node-exporter
+  namespace: prometheus
+  name: node-exporter
+spec:
+  selector:
+    matchLabels:
+      k8s-app: node-exporter
+  template:
+    metadata:
+      labels:
+        k8s-app: node-exporter
+      annotations:
+        prometheus.io/scrape: "true"
+    spec:
+      hostPID: true
+      containers:
+        - name: node-exporter
+          image: prom/node-exporter:v0.18.1
+          securityContext:
+            privileged: true
+          ports:
+            - containerPort: 9100
+      tolerations:
+        - operator: "Exists"
