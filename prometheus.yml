@@ -172,6 +172,12 @@ data:
             annotations:
               summary: "{{ $labels.instance }}: High CPU usage"
               description: "{{ $labels.instance }} CPU usage is above 85% (current value: {{ $value }})"
+          - alert: NonPodCpuHigh
+            expr: ((sum by (instance) (irate(node_cpu_seconds_total{mode!="idle"}[1m]))) - (sum by (instance) (irate(container_cpu_usage_seconds_total{pod!=""}[1m])) )) /2 *100 > 30
+            for: 15m
+            annotations:
+              summary: "{{ $labels.instance }}: High non-Pod CPU usage"
+              description: "{{ $labels.instance }} non-Pod CPU usage is above 30% (current value: {{ $value }})"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -220,8 +226,8 @@ metadata:
   namespace: prometheus
   name: prometheus
   annotations:
-      prometheus.io/scrape: 'true'
-      prometheus.io/port:   '9090'
+    prometheus.io/scrape: 'true'
+    prometheus.io/port:   '9090'
 
 spec:
   selector:
