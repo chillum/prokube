@@ -11,4 +11,4 @@ Get Vagrant and VirtualBox, fire `vagrant up`. It's fully automated.
 
 ## Test cases for alerts
 
-* CPU usage: enter any node and launch `sh /vagrant/load-cpu.sh`
+* CPU usage: enter any node and launch `/vagrant/load-cpu.sh`
