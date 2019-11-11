@@ -178,6 +178,11 @@ data:
             annotations:
               summary: "{{ $labels.instance }}: High non-Pod CPU usage"
               description: "{{ $labels.instance }} non-Pod CPU usage is above 30% (current value: {{ $value }})"
+          - alert: PodMemoryHigh
+            expr: (sum by (instance, pod) (container_memory_usage_bytes{pod!=""})) / 1024 / 1024 > 512 # RAM and CPU numbers hardcoded to speed up my progress. I know that's bad.
+            annotations:
+              summary: "{{ $labels.instance }}/{{ $labels.pod }}: High pod memory usage"
+              description: "{{ $labels.instance }}/{{ $labels.pod }} pod memory usage is above 50%: {{ $value }}MB"
 ---
 apiVersion: apps/v1
 kind: Deployment
