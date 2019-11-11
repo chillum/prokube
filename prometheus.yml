@@ -159,6 +159,10 @@ data:
     groups:
       - name: Alerts
         rules:
+          - alert: KubeControllerIsDown
+            expr: absent(rate(container_last_seen{pod="kube-controller-manager-master"}[1m]))
+            annotations:
+              summary: kube-controller-manager is down
           - alert: NodeCpuHigh
             expr: 100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[1m])) * 100) > 85
             for: 15m
