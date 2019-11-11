@@ -233,7 +233,6 @@ metadata:
   annotations:
     prometheus.io/scrape: 'true'
     prometheus.io/port:   '9090'
-
 spec:
   selector:
     k8s-app: prometheus
